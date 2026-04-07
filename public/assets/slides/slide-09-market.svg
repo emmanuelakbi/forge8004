@@ -1,0 +1,55 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="720" fill="#0A0A0B"/>
+  <g opacity="0.06">
+    <line x1="0" y1="60" x2="1280" y2="60" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="120" x2="1280" y2="120" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="180" x2="1280" y2="180" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="240" x2="1280" y2="240" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="300" x2="1280" y2="300" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="360" x2="1280" y2="360" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="420" x2="1280" y2="420" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="480" x2="1280" y2="480" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="540" x2="1280" y2="540" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="600" x2="1280" y2="600" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="660" x2="1280" y2="660" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="60" y1="0" x2="60" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="120" y1="0" x2="120" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="180" y1="0" x2="180" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="240" y1="0" x2="240" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="300" y1="0" x2="300" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="360" y1="0" x2="360" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="420" y1="0" x2="420" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="480" y1="0" x2="480" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="540" y1="0" x2="540" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="600" y1="0" x2="600" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="660" y1="0" x2="660" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="720" y1="0" x2="720" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="780" y1="0" x2="780" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="840" y1="0" x2="840" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="900" y1="0" x2="900" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="960" y1="0" x2="960" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="1020" y1="0" x2="1020" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="1080" y1="0" x2="1080" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="1140" y1="0" x2="1140" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="1200" y1="0" x2="1200" y2="720" stroke="#FFF" stroke-width="0.5"/>
+  </g>
+  <circle cx="400" cy="400" r="350" fill="#38BDF8" fill-opacity="0.06"/>
+  <rect x="24" y="24" width="1232" height="672" stroke="#FFFFFF" stroke-opacity="0.05"/>
+
+  <text x="48" y="56" fill="#38BDF8" font-family="monospace" font-size="11" letter-spacing="0.2em">09</text>
+  <text x="48" y="110" fill="#FFFFFF" font-family="monospace" font-size="28" font-weight="700">MARKET OPPORTUNITY</text>
+  <text x="48" y="137" fill="#A1A1AA" font-family="monospace" font-size="13">TEAMS NEED OVERSIGHT, NOT MORE BLACK BOXES</text>
+
+  <!-- Left: Market bars -->
+  <rect x="48" y="175" width="660" height="440" fill="rgba(8,19,27,0.8)" stroke="rgba(56,189,248,0.24)"/>
+  <text x="72" y="210" fill="#71717A" font-family="monospace" font-size="10" letter-spacing="0.22em">WHERE DEMAND IS FORMING</text>
+
+  <text x="72" y="260" fill="#D4D4D8" font-family="monospace" font-size="11">AI AGENT SOFTWARE</text>
+  <rect x="72" y="270" width="560" height="10" fill="rgba(56,189,248,0.15)"/>
+  <rect x="72" y="270" width="459" height="10" fill="#38BDF8"/>
+  <text x="640" y="280" fill="#38BDF8" font-family="monospace" font-size="10">RISING</text>
+
+  <text x="72" y="315" fill="#D4D4D8" font-family="monospace" font-size="11">ON-CHAIN OPERATIONS</text>
+  <rect x="72" y="325" width="560" height="10" fill="rgba(56,189,248,0.15)"/>
+  <rect x="72" y="325" width="398" height="10" fill="#38BDF8"/>
+  <text x="640" y="335" fill="#38BDF8" font-family="monospace" font-size="10">EXPANDING</text>
+
+  <text x="72" y="370" fill="#D4D4D8" font-family="monospace" font-size="11">TEAM OVERSIGHT TOOLS</text>
+  <rect x="72" y="380" width="560" height="10" fill="rgba(56,189,248,0.15)"/>
+  <rect x="72" y="380" width="353" height="10" fill="#38BDF8"/>
+  <text x="640" y="390" fill="#38BDF8" font-family="monospace" font-size="10">UNDERSERVED</text>
+
+  <text x="72" y="425" fill="#D4D4D8" font-family="monospace" font-size="11">TRUST REPORTING</text>
+  <rect x="72" y="435" width="560" height="10" fill="rgba(56,189,248,0.15)"/>
+  <rect x="72" y="435" width="493" height="10" fill="#38BDF8"/>
+  <text x="640" y="445" fill="#38BDF8" font-family="monospace" font-size="10">OPEN LANE</text>
+
+  <!-- Right: 3 insight cards -->
+  <rect x="728" y="175" width="504" height="130" fill="rgba(8,19,27,0.8)" stroke="rgba(56,189,248,0.24)"/>
+  <text x="752" y="210" fill="#FFFFFF" font-family="monospace" font-size="14" font-weight="700">MORE AGENT ACTIVITY</text>
+  <text x="752" y="235" fill="#A1A1AA" font-family="monospace" font-size="11">TEAMS NEED A BETTER OPERATOR LAYER AS ACTIVITY GROWS.</text>
+
+  <rect x="728" y="320" width="504" height="130" fill="rgba(8,19,27,0.8)" stroke="rgba(56,189,248,0.24)"/>
+  <text x="752" y="355" fill="#FFFFFF" font-family="monospace" font-size="14" font-weight="700">MORE MONEY AT STAKE</text>
+  <text x="752" y="380" fill="#A1A1AA" font-family="monospace" font-size="11">GUARDRAILS BECOME A PRODUCT FEATURE, NOT JUST A</text>
+  <text x="752" y="398" fill="#A1A1AA" font-family="monospace" font-size="11">BACKEND RULE.</text>
+
+  <rect x="728" y="465" width="504" height="130" fill="rgba(8,19,27,0.8)" stroke="rgba(56,189,248,0.24)"/>
+  <text x="752" y="500" fill="#FFFFFF" font-family="monospace" font-size="14" font-weight="700">MORE SCRUTINY</text>
+  <text x="752" y="525" fill="#A1A1AA" font-family="monospace" font-size="11">READABLE HISTORY MATTERS WHEN TRUST NEEDS TO BE EARNED.</text>
+
+  <line x1="48" y1="670" x2="1232" y2="670" stroke="rgba(255,255,255,0.06)"/>
+  <text x="48" y="695" fill="#71717A" font-family="monospace" font-size="11" letter-spacing="0.15em">FORGE8004</text>
+  <text x="1232" y="695" fill="#71717A" font-family="monospace" font-size="11" text-anchor="end" letter-spacing="0.15em">09 / 12</text>
+</svg>

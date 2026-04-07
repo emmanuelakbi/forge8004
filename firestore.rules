@@ -1,0 +1,384 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: agents
+    // Document ID: agentId
+    // Fields:
+    //   - agentId: string (required, immutable)
+    //   - name: string (required, max 50 chars)
+    //   - description: string (optional, max 500 chars)
+    //   - strategyType: string (required, enum)
+    //   - riskProfile: string (required, enum)
+    //   - avatarUrl: string (optional, valid URL)
+    //   - owner: string (required, matches auth.uid)
+    //   - createdAt: timestamp (required, immutable)
+    //
+    // Collection: reputation
+    // Document ID: agentId
+    // Fields:
+    //   - agentId: string (required, immutable)
+    //   - cumulativePnl: number (required)
+    //   - totalFunds: number (required)
+    //   - maxDrawdown: number (required)
+    //   - tradesCount: int (required)
+    //   - sharpeLikeScore: number (required)
+    //
+    // Sub-collection: agents/{agentId}/validations
+    // Document ID: validationId
+    // Fields:
+    //   - id: string (required, immutable)
+    //   - agentId: string (required, immutable)
+    //   - validator: string (required, max 50 chars)
+    //   - score: number (required, 0-100)
+    //   - comment: string (optional, max 200 chars)
+    //   - validationType: string (required, enum)
+    //   - timestamp: timestamp (required, immutable)
+    //
+    // Sub-collection: agents/{agentId}/pnl_history
+    // Document ID: pointId
+    // Fields:
+    //   - timestamp: timestamp (required, immutable)
+    //   - value: number (required)
+    //
+    // Sub-collection: agents/{agentId}/vault_transactions
+    // Document ID: txId
+    // Fields:
+    //   - id: string (required, immutable)
+    //   - agentId: string (required, immutable)
+    //   - amount: number (required)
+    //   - type: string (required, enum)
+    //   - status: string (required, enum)
+    //   - txHash: string (optional)
+    //   - timestamp: timestamp (required, immutable)
+    //
+    // Sub-collection: agents/{agentId}/intents
+    // Document ID: intentId
+    // Fields:
+    //   - agentId: string (required, immutable)
+    //   - side: string (required, enum)
+    //   - size: number (required)
+    //   - entryPrice: number (required)
+    //   - status: string (required, enum)
+    //   - timestamp: timestamp (required, immutable)
+    //
+    // Collection: active_positions
+    // Document ID: agentId
+    // Fields:
+    //   - agentId: string (required, immutable)
+    //   - positions: list (required)
+    //   - updatedAt: timestamp (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          request.auth.token.admin == true);
+    }
+
+    function isAgentOwner(agentId) {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/agents/$(agentId)).data.owner == request.auth.uid;
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function isValidUrl(url) {
+      return url is string && (url.matches("^https://.*") || url.matches("^http://.*"));
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidAgent(data) {
+      return hasRequiredFields(['agentId', 'name', 'strategyType', 'riskProfile', 'owner', 'createdAt']) &&
+             hasOnlyAllowedFields(['agentId', 'name', 'description', 'strategyType', 'gridSubType', 'status', 'riskProfile', 'avatarUrl', 'agentWallet', 'owner', 'createdAt', 'onChain']) &&
+             data.agentId is string && data.agentId.size() > 0 && data.agentId.size() < 50 &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             (!('description' in data) || (data.description is string && data.description.size() <= 1000)) &&
+             data.strategyType is string &&
+             data.riskProfile is string &&
+             (!('avatarUrl' in data) || data.avatarUrl is string) &&
+             (!('agentWallet' in data) || data.agentWallet is string) &&
+             (!('status' in data) || data.status in ['active', 'deactivated']) &&
+             data.owner is string && data.owner == request.auth.uid &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidReputation(data) {
+      return hasRequiredFields(['agentId', 'cumulativePnl', 'totalFunds', 'maxDrawdown', 'tradesCount', 'sharpeLikeScore']) &&
+             hasOnlyAllowedFields(['agentId', 'cumulativePnl', 'totalFunds', 'maxDrawdown', 'tradesCount', 'sharpeLikeScore']) &&
+             data.agentId is string && 
+             data.cumulativePnl is number &&
+             data.totalFunds is number &&
+             data.maxDrawdown is number &&
+             data.tradesCount is int &&
+             data.sharpeLikeScore is number;
+    }
+
+    function isValidValidation(data) {
+      return hasRequiredFields(['agentId', 'validator', 'score', 'validationType', 'timestamp']) &&
+             data.agentId is string &&
+             data.validator is string && data.validator.size() < 100 &&
+             data.score is number && data.score >= 0 && data.score <= 100 &&
+             data.validationType is string &&
+             data.timestamp is timestamp;
+    }
+
+    function isValidVaultTransaction(data) {
+      return hasRequiredFields(['id', 'agentId', 'amount', 'type', 'status', 'timestamp']) &&
+             data.id is string &&
+             data.agentId is string &&
+             data.amount is number &&
+             data.type in ['DEPOSIT', 'WITHDRAWAL', 'VAULT_FUNDING'] &&
+             data.status in ['PENDING', 'COMPLETED', 'FAILED'] &&
+             data.timestamp is timestamp;
+    }
+
+    function isValidTradeIntent(data) {
+      return hasRequiredFields(['agentId', 'side', 'size', 'status', 'timestamp']) &&
+             data.agentId is string && data.agentId.size() < 50 &&
+             data.side in ['BUY', 'SELL', 'HOLD'] &&
+             data.size is number &&
+             (!('entryPrice' in data) || data.entryPrice is number) &&
+             data.status in ['OPEN', 'CLOSED', 'CANCELLED', 'HOLD', 'PENDING', 'EXECUTED', 'HIT_TP', 'HIT_SL'] &&
+             data.timestamp is timestamp &&
+             (!('reason' in data) || (data.reason is string && data.reason.size() < 1000)) &&
+             (!('asset' in data) || (data.asset is string && data.asset.size() < 20));
+    }
+
+    function isValidActivePositions(data) {
+      return hasRequiredFields(['agentId', 'positions', 'updatedAt']) &&
+             data.agentId is string &&
+             data.positions is list &&
+             data.updatedAt is timestamp;
+    }
+
+    function isValidCheckpoint(data) {
+      return hasRequiredFields(['agentId', 'kind', 'stage', 'status', 'title', 'detail', 'timestamp']) &&
+             data.agentId is string &&
+             data.kind in ['INTENT', 'SIGNED', 'RISK', 'EXECUTION', 'VALIDATION'] &&
+             data.stage in ['INTENT_CREATED', 'INTENT_SIGNED', 'RISK_REVIEWED', 'EXECUTION_RECORDED', 'VALIDATION_RECORDED'] &&
+             data.status in ['RECORDED', 'APPROVED', 'BLOCKED', 'PENDING', 'INFO'] &&
+             data.title is string && data.title.size() < 120 &&
+             data.detail is string && data.detail.size() < 1000 &&
+             data.timestamp is timestamp;
+    }
+
+    function isValidNonceRegistry(data) {
+      return hasRequiredFields(['agentId', 'nonce', 'status', 'timestamp']) &&
+             data.agentId is string &&
+             data.nonce is string &&
+             data.status in ['RESERVED', 'CONSUMED', 'VOID'] &&
+             (!('intentId' in data) || data.intentId is string) &&
+             (!('voidedAt' in data) || data.voidedAt is timestamp) &&
+             data.timestamp is timestamp;
+    }
+
+    function isValidRuntimeState(data) {
+      return hasRequiredFields(['agentId', 'nonceCounter', 'updatedAt']) &&
+             data.agentId is string &&
+             data.nonceCounter is int &&
+             (!('lastNonce' in data) || data.lastNonce is string) &&
+             (!('lastIntentId' in data) || data.lastIntentId is string) &&
+             (!('sessionActive' in data) || data.sessionActive is bool) &&
+             (!('lastCycleAt' in data) || data.lastCycleAt is timestamp) &&
+             data.updatedAt is timestamp;
+    }
+
+    function isValidGridRuntimeState(data) {
+      return hasRequiredFields(['agentId', 'mode', 'status', 'asset', 'referencePrice', 'rangeLow', 'rangeHigh', 'gridLevels', 'gridSpacingPct', 'capitalReserved', 'availableQuote', 'heldBase', 'filledGridLegs', 'cumulativeGridProfit', 'levels', 'lastRebuildAt', 'updatedAt']) &&
+             data.agentId is string &&
+             data.mode == 'spot_grid_bot' &&
+             data.status in ['active', 'rebuilding', 'paused', 'stopped'] &&
+             data.asset in ['BTC', 'ETH'] &&
+             data.referencePrice is number &&
+             data.rangeLow is number &&
+             data.rangeHigh is number &&
+             data.gridLevels is int &&
+             data.gridSpacingPct is number &&
+             data.capitalReserved is number &&
+             data.availableQuote is number &&
+             data.heldBase is number &&
+             data.filledGridLegs is int &&
+             data.cumulativeGridProfit is number &&
+             data.levels is list &&
+             data.lastRebuildAt is timestamp &&
+             (!('lastGridEventAt' in data) || data.lastGridEventAt is timestamp) &&
+             data.updatedAt is timestamp &&
+             (!('configMode' in data) || data.configMode in ['ai', 'manual']) &&
+             (!('totalInvestment' in data) || data.totalInvestment is number) &&
+             (!('previouslyWithdrawn' in data) || data.previouslyWithdrawn is number) &&
+             (!('profitableTradesCount' in data) || data.profitableTradesCount is int) &&
+             (!('totalTradesCount' in data) || data.totalTradesCount is int) &&
+             (!('trailingStopPct' in data) || data.trailingStopPct is number) &&
+             (!('stopLossPrice' in data) || data.stopLossPrice is number) &&
+             (!('takeProfitPrice' in data) || data.takeProfitPrice is number) &&
+             (!('trailingUpEnabled' in data) || data.trailingUpEnabled is bool) &&
+             (!('trailingUpStopPrice' in data) || data.trailingUpStopPrice is number) &&
+             (!('configHistory' in data) || data.configHistory is list) &&
+             (!('startedAt' in data) || data.startedAt is timestamp);
+    }
+
+    // ===============================================================
+    // Match Rules
+    // ===============================================================
+
+    match /agents/{agentId} {
+      allow read: if isAuthenticated() && (resource.data.owner == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated() && isValidAgent(request.resource.data);
+      allow update: if isAuthenticated() && isValidAgent(request.resource.data) && 
+                      (request.auth.uid == resource.data.owner || isAdmin()) &&
+                      request.resource.data.agentId == resource.data.agentId &&
+                      request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isAuthenticated() && (resource.data.owner == request.auth.uid || isAdmin());
+
+      match /validations/{validationId} {
+        allow read: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+        allow create: if isAuthenticated() &&
+                        isValidValidation(request.resource.data) &&
+                        request.resource.data.agentId == agentId &&
+                        (isAgentOwner(agentId) || isAdmin());
+        allow update: if isAdmin();
+        allow delete: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+      }
+
+      match /pnl_history/{pointId} {
+        allow read: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+        allow create: if isAuthenticated() &&
+                        request.resource.data.timestamp is timestamp &&
+                        request.resource.data.value is number &&
+                        (isAgentOwner(agentId) || isAdmin());
+        allow update: if isAdmin();
+        allow delete: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+      }
+
+      match /vault_transactions/{txId} {
+        allow read: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+        allow create: if isAuthenticated() &&
+                        isValidVaultTransaction(request.resource.data) &&
+                        request.resource.data.agentId == agentId &&
+                        (isAgentOwner(agentId) || isAdmin());
+        allow update: if isAdmin();
+        allow delete: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+      }
+
+      match /intents/{intentId} {
+        allow read: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+        allow create: if isAuthenticated() &&
+                        isValidTradeIntent(request.resource.data) &&
+                        request.resource.data.agentId == agentId &&
+                        (isAgentOwner(agentId) || isAdmin());
+        allow update: if isAdmin();
+        allow delete: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+      }
+
+      match /checkpoints/{checkpointId} {
+        allow read: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+        allow create, update: if isAuthenticated() &&
+                                isValidCheckpoint(request.resource.data) &&
+                                request.resource.data.agentId == agentId &&
+                                (isAgentOwner(agentId) || isAdmin());
+        allow delete: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+      }
+
+      match /nonce_registry/{nonceId} {
+        allow read: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+        allow create, update: if isAuthenticated() &&
+                                isValidNonceRegistry(request.resource.data) &&
+                                request.resource.data.agentId == agentId &&
+                                (isAgentOwner(agentId) || isAdmin());
+        allow delete: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+      }
+
+      match /runtime/{runtimeId} {
+        allow read: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+        allow create, update: if isAuthenticated() &&
+                                ((runtimeId == 'state' && isValidRuntimeState(request.resource.data)) ||
+                                 (runtimeId == 'grid' && isValidGridRuntimeState(request.resource.data))) &&
+                                request.resource.data.agentId == agentId &&
+                                (isAgentOwner(agentId) || isAdmin());
+        allow delete: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+      }
+
+      match /ai_accuracy/{recordId} {
+        allow read: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+        allow create: if isAuthenticated() &&
+                        request.resource.data.agentId == agentId &&
+                        request.resource.data.timestamp is timestamp &&
+                        (isAgentOwner(agentId) || isAdmin());
+        allow update: if isAdmin();
+        allow delete: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+      }
+    }
+
+    match /active_positions/{agentId} {
+      allow read: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+      allow write: if isAuthenticated() &&
+                      isValidActivePositions(request.resource.data) &&
+                      request.resource.data.agentId == agentId &&
+                      (isAgentOwner(agentId) || isAdmin());
+      allow delete: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+    }
+
+    match /pending_orders/{agentId} {
+      allow read: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+      allow write: if isAuthenticated() &&
+                      hasRequiredFields(['agentId', 'orders', 'updatedAt']) &&
+                      request.resource.data.agentId is string &&
+                      request.resource.data.orders is list &&
+                      request.resource.data.updatedAt is timestamp &&
+                      request.resource.data.agentId == agentId &&
+                      (isAgentOwner(agentId) || isAdmin());
+      allow delete: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+    }
+
+    match /reputation/{agentId} {
+      allow read: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+      allow create: if isAuthenticated() &&
+                      isValidReputation(request.resource.data) &&
+                      request.resource.data.agentId == agentId &&
+                      (isAgentOwner(agentId) || isAdmin());
+      allow update: if isAuthenticated() &&
+                      isValidReputation(request.resource.data) &&
+                      request.resource.data.agentId == agentId &&
+                      (isAgentOwner(agentId) || isAdmin());
+      allow delete: if isAuthenticated() && (isAgentOwner(agentId) || isAdmin());
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create, update: if isOwner(userId) && hasOnlyAllowedFields(['name', 'email', 'role']) &&
+                              request.resource.data.role == 'user'; // Users can't make themselves admins
+      allow delete: if isAdmin();
+    }
+  }
+}

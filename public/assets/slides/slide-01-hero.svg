@@ -1,0 +1,114 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="720" fill="#0A0A0B"/>
+
+  <!-- Grid -->
+  <g opacity="0.06">
+    <line x1="0" y1="60" x2="1280" y2="60" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="0" y1="120" x2="1280" y2="120" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="0" y1="180" x2="1280" y2="180" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="0" y1="240" x2="1280" y2="240" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="0" y1="300" x2="1280" y2="300" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="0" y1="360" x2="1280" y2="360" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="0" y1="420" x2="1280" y2="420" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="0" y1="480" x2="1280" y2="480" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="0" y1="540" x2="1280" y2="540" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="0" y1="600" x2="1280" y2="600" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="0" y1="660" x2="1280" y2="660" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="60" y1="0" x2="60" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="120" y1="0" x2="120" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="180" y1="0" x2="180" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="240" y1="0" x2="240" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="300" y1="0" x2="300" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="360" y1="0" x2="360" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="420" y1="0" x2="420" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="480" y1="0" x2="480" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="540" y1="0" x2="540" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="600" y1="0" x2="600" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="660" y1="0" x2="660" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="720" y1="0" x2="720" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="780" y1="0" x2="780" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="840" y1="0" x2="840" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="900" y1="0" x2="900" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="960" y1="0" x2="960" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="1020" y1="0" x2="1020" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="1080" y1="0" x2="1080" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="1140" y1="0" x2="1140" y2="720" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="1200" y1="0" x2="1200" y2="720" stroke="#FFF" stroke-width="0.5"/>
+  </g>
+
+  <!-- Glow -->
+  <circle cx="200" cy="100" r="400" fill="#10B981" fill-opacity="0.10"/>
+
+  <!-- Inner frame -->
+  <rect x="24" y="24" width="1232" height="672" stroke="#FFFFFF" stroke-opacity="0.05"/>
+
+  <!-- Slide number -->
+  <text x="48" y="56" fill="#10B981" font-family="monospace" font-size="11" letter-spacing="0.2em">01</text>
+
+  <!-- Logo -->
+  <rect x="48" y="70" width="44" height="44" fill="rgba(22,22,24,0.88)" stroke="rgba(255,255,255,0.1)"/>
+  <path d="M70 76L56 83V92C56 100 62 107 70 110C78 107 84 100 84 92V83L70 76Z" fill="#10B981"/>
+  <path d="M70 80L60 84V92C60 98 64 103 70 106C76 103 80 98 80 92V84L70 80Z" fill="#0A0A0A"/>
+  <circle cx="70" cy="91" r="5" fill="#10B981"/>
+
+  <!-- Title -->
+  <text x="48" y="160" fill="#FFFFFF" font-family="monospace" font-size="28" font-weight="700">SEE EVERY AI AGENT DECISION IN ONE PLACE</text>
+  <text x="48" y="190" fill="#A1A1AA" font-family="monospace" font-size="13">A CALMER OPERATOR LAYER FOR TEAMS USING AI TRADING AGENTS</text>
+
+  <!-- Left column: description + 4 highlights -->
+  <text x="48" y="240" fill="#D4D4D8" font-family="monospace" font-size="11" letter-spacing="0.04em">FORGE8004 HELPS TEAMS FOLLOW INTENT, SAFETY CHECKS,</text>
+  <text x="48" y="258" fill="#D4D4D8" font-family="monospace" font-size="11" letter-spacing="0.04em">CAPITAL USE, AND OUTCOMES WITHOUT DIGGING THROUGH</text>
+  <text x="48" y="276" fill="#D4D4D8" font-family="monospace" font-size="11" letter-spacing="0.04em">SCATTERED LOGS.</text>
+
+  <!-- 4 highlight boxes -->
+  <rect x="48" y="310" width="560" height="36" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.08)"/>
+  <rect x="60" y="322" width="8" height="8" fill="#10B981"/>
+  <text x="80" y="333" fill="#E4E4E7" font-family="monospace" font-size="11" letter-spacing="0.14em">ONE OPERATOR CONSOLE</text>
+
+  <rect x="48" y="354" width="560" height="36" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.08)"/>
+  <rect x="60" y="366" width="8" height="8" fill="#10B981"/>
+  <text x="80" y="377" fill="#E4E4E7" font-family="monospace" font-size="11" letter-spacing="0.14em">VISIBLE SAFETY CHECKS</text>
+
+  <rect x="48" y="398" width="560" height="36" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.08)"/>
+  <rect x="60" y="410" width="8" height="8" fill="#10B981"/>
+  <text x="80" y="421" fill="#E4E4E7" font-family="monospace" font-size="11" letter-spacing="0.14em">READABLE DECISION HISTORY</text>
+
+  <rect x="48" y="442" width="560" height="36" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.08)"/>
+  <rect x="60" y="454" width="8" height="8" fill="#10B981"/>
+  <text x="80" y="465" fill="#E4E4E7" font-family="monospace" font-size="11" letter-spacing="0.14em">BUILT FOR TEAMS</text>
+
+  <!-- Right column: Current sequence panel -->
+  <rect x="640" y="220" width="592" height="280" fill="rgba(10,21,18,0.78)" stroke="rgba(16,185,129,0.28)"/>
+  <text x="664" y="250" fill="#71717A" font-family="monospace" font-size="10" letter-spacing="0.22em">CURRENT SEQUENCE</text>
+  <text x="664" y="295" fill="#FFFFFF" font-family="monospace" font-size="20" font-weight="700">BUY ETH ONLY WITHIN</text>
+  <text x="664" y="320" fill="#FFFFFF" font-family="monospace" font-size="20" font-weight="700">SAFE CAPITAL LIMITS</text>
+
+  <!-- Checkmarks -->
+  <circle cx="678" y="360" r="8" stroke="#10B981" stroke-width="1.5" fill="none"/>
+  <path d="M674 360L677 363L683 357" stroke="#10B981" stroke-width="1.5" fill="none"/>
+  <text x="694" y="364" fill="#D4D4D8" font-family="monospace" font-size="11" letter-spacing="0.12em">CAPITAL CAP CHECKED</text>
+
+  <circle cx="678" cy="390" r="8" stroke="#10B981" stroke-width="1.5" fill="none"/>
+  <path d="M674 390L677 393L683 387" stroke="#10B981" stroke-width="1.5" fill="none"/>
+  <text x="694" y="394" fill="#D4D4D8" font-family="monospace" font-size="11" letter-spacing="0.12em">RISK SCORE REVIEWED</text>
+
+  <circle cx="678" cy="420" r="8" stroke="#10B981" stroke-width="1.5" fill="none"/>
+  <path d="M674 420L677 423L683 417" stroke="#10B981" stroke-width="1.5" fill="none"/>
+  <text x="694" y="424" fill="#D4D4D8" font-family="monospace" font-size="11" letter-spacing="0.12em">TRADE REASON RECORDED</text>
+
+  <!-- Stat boxes -->
+  <rect x="640" y="520" width="288" height="80" fill="rgba(10,21,18,0.78)" stroke="rgba(16,185,129,0.28)"/>
+  <text x="664" y="548" fill="#10B981" font-family="monospace" font-size="10" letter-spacing="0.2em">SIGNAL</text>
+  <text x="664" y="575" fill="#FFFFFF" font-family="monospace" font-size="20" font-weight="700">HOLD</text>
+  <text x="760" y="575" fill="#A1A1AA" font-family="monospace" font-size="10">WAITING SAFELY</text>
+
+  <rect x="944" y="520" width="288" height="80" fill="rgba(10,21,18,0.78)" stroke="rgba(16,185,129,0.28)"/>
+  <text x="968" y="548" fill="#10B981" font-family="monospace" font-size="10" letter-spacing="0.2em">CAPITAL</text>
+  <text x="968" y="575" fill="#FFFFFF" font-family="monospace" font-size="20" font-weight="700">$18K</text>
+  <text x="1060" y="575" fill="#A1A1AA" font-family="monospace" font-size="10">FREE TO ROUTE</text>
+
+  <!-- Footer -->
+  <line x1="48" y1="670" x2="1232" y2="670" stroke="rgba(255,255,255,0.06)"/>
+  <text x="48" y="695" fill="#71717A" font-family="monospace" font-size="11" letter-spacing="0.15em">FORGE8004</text>
+  <text x="1232" y="695" fill="#71717A" font-family="monospace" font-size="11" text-anchor="end" letter-spacing="0.15em">01 / 12</text>
+</svg>

@@ -1,0 +1,50 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="720" fill="#0A0A0B"/>
+  <g opacity="0.06">
+    <line x1="0" y1="60" x2="1280" y2="60" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="120" x2="1280" y2="120" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="180" x2="1280" y2="180" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="240" x2="1280" y2="240" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="300" x2="1280" y2="300" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="360" x2="1280" y2="360" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="420" x2="1280" y2="420" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="480" x2="1280" y2="480" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="540" x2="1280" y2="540" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="600" x2="1280" y2="600" stroke="#FFF" stroke-width="0.5"/><line x1="0" y1="660" x2="1280" y2="660" stroke="#FFF" stroke-width="0.5"/>
+    <line x1="60" y1="0" x2="60" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="120" y1="0" x2="120" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="180" y1="0" x2="180" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="240" y1="0" x2="240" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="300" y1="0" x2="300" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="360" y1="0" x2="360" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="420" y1="0" x2="420" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="480" y1="0" x2="480" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="540" y1="0" x2="540" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="600" y1="0" x2="600" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="660" y1="0" x2="660" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="720" y1="0" x2="720" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="780" y1="0" x2="780" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="840" y1="0" x2="840" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="900" y1="0" x2="900" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="960" y1="0" x2="960" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="1020" y1="0" x2="1020" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="1080" y1="0" x2="1080" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="1140" y1="0" x2="1140" y2="720" stroke="#FFF" stroke-width="0.5"/><line x1="1200" y1="0" x2="1200" y2="720" stroke="#FFF" stroke-width="0.5"/>
+  </g>
+  <circle cx="200" cy="600" r="350" fill="#38BDF8" fill-opacity="0.06"/>
+  <rect x="24" y="24" width="1232" height="672" stroke="#FFFFFF" stroke-opacity="0.05"/>
+
+  <text x="48" y="56" fill="#38BDF8" font-family="monospace" font-size="11" letter-spacing="0.2em">07</text>
+  <text x="48" y="110" fill="#FFFFFF" font-family="monospace" font-size="28" font-weight="700">TRUST LAYER</text>
+  <text x="48" y="137" fill="#A1A1AA" font-family="monospace" font-size="13">TRUST IS STRONGER WHEN THE STORY STAYS VISIBLE OVER TIME</text>
+
+  <!-- 4 trust pillars -->
+  <rect x="48" y="185" width="284" height="430" fill="rgba(8,19,27,0.8)" stroke="rgba(56,189,248,0.24)"/>
+  <rect x="72" y="210" width="36" height="36" fill="rgba(56,189,248,0.12)" stroke="rgba(56,189,248,0.24)"/>
+  <text x="90" y="234" fill="#38BDF8" font-family="monospace" font-size="10" font-weight="700" text-anchor="middle">01</text>
+  <text x="72" y="275" fill="#FFFFFF" font-family="monospace" font-size="14" font-weight="700">IDENTITY</text>
+  <text x="72" y="300" fill="#A1A1AA" font-family="monospace" font-size="11">WHO THE AGENT IS AND</text>
+  <text x="72" y="318" fill="#A1A1AA" font-family="monospace" font-size="11">WHAT WALLET OR ACCOUNT</text>
+  <text x="72" y="336" fill="#A1A1AA" font-family="monospace" font-size="11">IT USES.</text>
+
+  <rect x="348" y="185" width="284" height="430" fill="rgba(8,19,27,0.8)" stroke="rgba(56,189,248,0.24)"/>
+  <rect x="372" y="210" width="36" height="36" fill="rgba(56,189,248,0.12)" stroke="rgba(56,189,248,0.24)"/>
+  <text x="390" y="234" fill="#38BDF8" font-family="monospace" font-size="10" font-weight="700" text-anchor="middle">02</text>
+  <text x="372" y="275" fill="#FFFFFF" font-family="monospace" font-size="14" font-weight="700">VALIDATION</text>
+  <text x="372" y="300" fill="#A1A1AA" font-family="monospace" font-size="11">WHAT CHECKS WERE</text>
+  <text x="372" y="318" fill="#A1A1AA" font-family="monospace" font-size="11">APPLIED BEFORE OR</text>
+  <text x="372" y="336" fill="#A1A1AA" font-family="monospace" font-size="11">AFTER AN ACTION.</text>
+
+  <rect x="648" y="185" width="284" height="430" fill="rgba(8,19,27,0.8)" stroke="rgba(56,189,248,0.24)"/>
+  <rect x="672" y="210" width="36" height="36" fill="rgba(56,189,248,0.12)" stroke="rgba(56,189,248,0.24)"/>
+  <text x="690" y="234" fill="#38BDF8" font-family="monospace" font-size="10" font-weight="700" text-anchor="middle">03</text>
+  <text x="672" y="275" fill="#FFFFFF" font-family="monospace" font-size="14" font-weight="700">EXECUTION</text>
+  <text x="672" y="300" fill="#A1A1AA" font-family="monospace" font-size="11">WHAT ACTUALLY HAPPENED</text>
+  <text x="672" y="318" fill="#A1A1AA" font-family="monospace" font-size="11">ONCE THE SYSTEM MADE</text>
+  <text x="672" y="336" fill="#A1A1AA" font-family="monospace" font-size="11">A CALL.</text>
+
+  <rect x="948" y="185" width="284" height="430" fill="rgba(8,19,27,0.8)" stroke="rgba(56,189,248,0.24)"/>
+  <rect x="972" y="210" width="36" height="36" fill="rgba(56,189,248,0.12)" stroke="rgba(56,189,248,0.24)"/>
+  <text x="990" y="234" fill="#38BDF8" font-family="monospace" font-size="10" font-weight="700" text-anchor="middle">04</text>
+  <text x="972" y="275" fill="#FFFFFF" font-family="monospace" font-size="14" font-weight="700">REPUTATION</text>
+  <text x="972" y="300" fill="#A1A1AA" font-family="monospace" font-size="11">A RUNNING SUMMARY OF</text>
+  <text x="972" y="318" fill="#A1A1AA" font-family="monospace" font-size="11">STEADY BEHAVIOR</text>
+  <text x="972" y="336" fill="#A1A1AA" font-family="monospace" font-size="11">OVER TIME.</text>
+
+  <line x1="48" y1="670" x2="1232" y2="670" stroke="rgba(255,255,255,0.06)"/>
+  <text x="48" y="695" fill="#71717A" font-family="monospace" font-size="11" letter-spacing="0.15em">FORGE8004</text>
+  <text x="1232" y="695" fill="#71717A" font-family="monospace" font-size="11" text-anchor="end" letter-spacing="0.15em">07 / 12</text>
+</svg>

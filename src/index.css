@@ -1,0 +1,215 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Geist:wght@300;400;600&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-obsidian: #0a0a0b;
+  --color-zinc-deep: #161618;
+  --color-emerald-cyber: #10b981;
+  --color-amber-warning: #f59e0b;
+  --color-border-subtle: #27272a;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    @apply bg-obsidian text-zinc-100 font-sans selection:bg-emerald-cyber/30 antialiased;
+    background-image:
+      linear-gradient(to right, rgba(39, 39, 42, 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(39, 39, 42, 0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-attachment: fixed;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
+    @apply font-mono tracking-tight uppercase;
+  }
+
+  img {
+    display: block;
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer components {
+  .page-shell {
+    @apply mx-auto w-full max-w-7xl space-y-8 sm:space-y-12;
+  }
+
+  .page-shell-narrow {
+    @apply mx-auto w-full max-w-5xl space-y-8 sm:space-y-12;
+  }
+
+  .page-header {
+    @apply flex flex-col gap-4 border-b border-border-subtle pb-6 sm:pb-8 md:flex-row md:items-end md:justify-between;
+  }
+
+  .glass-panel {
+    @apply bg-zinc-deep/80 backdrop-blur-md border border-border-subtle rounded-none;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(39, 39, 42, 0.9) transparent;
+  }
+
+  .btn-primary {
+    @apply bg-emerald-cyber text-obsidian font-mono font-bold px-4 py-2 uppercase transition-all hover:bg-emerald-cyber/90 hover:scale-[1.02] active:scale-95 disabled:opacity-50 cursor-pointer;
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      100% calc(100% - 8px),
+      calc(100% - 8px) 100%,
+      0 100%
+    );
+  }
+
+  .btn-secondary {
+    @apply border border-emerald-cyber/50 text-emerald-cyber font-mono px-4 py-2 uppercase transition-all hover:bg-emerald-cyber/10 cursor-pointer;
+    clip-path: polygon(8px 0, 100% 0, 100% 100%, 0 100%, 0 8px);
+  }
+
+  .status-glow {
+    @apply relative;
+  }
+
+  .status-glow::after {
+    content: "";
+    @apply absolute inset-0 rounded-full blur-sm opacity-50;
+    background: currentColor;
+  }
+
+  .grain-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.02;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.9'/%3E%3C/svg%3E");
+    contain: strict;
+  }
+
+  .social-flyer-preview > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .animate-bounce-x {
+    animation: bounce-x 1.8s ease-in-out infinite;
+  }
+}
+
+@keyframes bounce-x {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-obsidian;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-border-subtle hover:bg-emerald-cyber/50 transition-colors;
+}
+
+/* Print styles for Trust Report */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .print\\:hidden,
+  [data-print-hide] {
+    display: none !important;
+  }
+  .glass-panel {
+    border-color: #ddd !important;
+    background: white !important;
+  }
+  .bg-obsidian,
+  .bg-obsidian\/60,
+  .bg-obsidian\/40 {
+    background: #f9f9f9 !important;
+  }
+  .text-white {
+    color: #111 !important;
+  }
+  .text-zinc-300,
+  .text-zinc-200 {
+    color: #333 !important;
+  }
+  .text-zinc-400,
+  .text-zinc-500,
+  .text-zinc-600 {
+    color: #666 !important;
+  }
+  .text-emerald-cyber {
+    color: #059669 !important;
+  }
+  .border-emerald-cyber\/30,
+  .border-emerald-cyber\/20 {
+    border-color: #059669 !important;
+  }
+  nav,
+  aside,
+  footer,
+  .grain-overlay {
+    display: none !important;
+  }
+}

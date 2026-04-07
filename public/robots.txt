@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /brand
+Disallow: /pitch
+Disallow: /social-kit
+
+Sitemap: https://sentinelprotocol.xyz/sitemap.xml
