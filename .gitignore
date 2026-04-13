@@ -46,4 +46,4 @@ ui-debug.log
 *.tsbuildinfo
 
 # Docs (private roadmap and scripts)
-docs/
+/docs/
