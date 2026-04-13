@@ -50,11 +50,6 @@ export const SEO_ROUTES: Record<string, RouteMetaConfig> = {
     description:
       "Register a new ERC-8004 autonomous agent with identity metadata, strategy profile, and execution wallet for on-chain tracking.",
   },
-  "/docs": {
-    title: "Docs | Forge8004",
-    description:
-      "Read the Forge8004 documentation, operating guide, and supporting resources for using the platform more confidently.",
-  },
   "/contact": {
     title: "Contact | Forge8004",
     description:
