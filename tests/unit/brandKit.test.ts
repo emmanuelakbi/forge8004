@@ -1,8 +1,8 @@
 // Unit tests for BrandKit page component
-// Validates: default export from src/pages/brand/BrandKit.tsx
+// Validates: default export from src/views/brand/BrandKit.tsx
 
 import { describe, it, expect } from "vitest";
-import BrandKit from "@/src/pages/brand/BrandKit";
+import BrandKit from "@/src/views/brand/BrandKit";
 
 describe("[BrandKit]", () => {
   describe("exports", () => {
@@ -36,8 +36,8 @@ describe("[BrandKit]", () => {
     });
 
     it("should be importable multiple times without side effects", async () => {
-      const mod1 = await import("@/src/pages/brand/BrandKit");
-      const mod2 = await import("@/src/pages/brand/BrandKit");
+      const mod1 = await import("@/src/views/brand/BrandKit");
+      const mod2 = await import("@/src/views/brand/BrandKit");
       expect(mod1.default).toBe(mod2.default);
     });
   });

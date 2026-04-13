@@ -1,7 +1,10 @@
-import { useState } from "react";
+"use client";
+
+import React, { useState } from "react";
 import { Activity, Settings, ArrowDownToLine, X } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { formatCurrency, formatEnumLabel } from "../../utils/format";
+import { useClientValue } from "@/app/hooks/useClientValue";
 import type { GridRuntimeState } from "../../lib/types";
 import type { MarketData } from "../../services/marketService";
 import type { ModifyGridParams } from "../../services/gridBotService";
@@ -173,6 +176,7 @@ function ModifyModal({
             <p className={labelClass}>Range Low (USDC)</p>
             <input
               type="number"
+              aria-label="Range Low (USDC)"
               className={inputClass}
               value={rangeLow}
               onChange={(e) => setRangeLow(e.target.value)}
@@ -182,6 +186,7 @@ function ModifyModal({
             <p className={labelClass}>Range High (USDC)</p>
             <input
               type="number"
+              aria-label="Range High (USDC)"
               className={inputClass}
               value={rangeHigh}
               onChange={(e) => setRangeHigh(e.target.value)}
@@ -193,6 +198,7 @@ function ModifyModal({
           <div className="flex items-center gap-2">
             <button
               type="button"
+              aria-label="Decrease grid levels"
               className="btn-secondary px-3 py-1 text-xs"
               onClick={() =>
                 setGridLevels(
@@ -204,12 +210,14 @@ function ModifyModal({
             </button>
             <input
               type="number"
+              aria-label="Grid levels"
               className={cn(inputClass, "text-center")}
               value={gridLevels}
               onChange={(e) => setGridLevels(e.target.value)}
             />
             <button
               type="button"
+              aria-label="Increase grid levels"
               className="btn-secondary px-3 py-1 text-xs"
               onClick={() =>
                 setGridLevels(
@@ -225,6 +233,7 @@ function ModifyModal({
           <p className={labelClass}>Trailing Stop (%)</p>
           <input
             type="number"
+            aria-label="Trailing Stop (%)"
             className={inputClass}
             placeholder="Optional"
             value={trailingStopPct}
@@ -236,6 +245,7 @@ function ModifyModal({
             <p className={labelClass}>Stop Loss (USDC)</p>
             <input
               type="number"
+              aria-label="Stop Loss (USDC)"
               className={inputClass}
               placeholder="Optional"
               value={stopLossPrice}
@@ -246,6 +256,7 @@ function ModifyModal({
             <p className={labelClass}>Take Profit (USDC)</p>
             <input
               type="number"
+              aria-label="Take Profit (USDC)"
               className={inputClass}
               placeholder="Optional"
               value={takeProfitPrice}
@@ -316,6 +327,7 @@ function WithdrawModal({
           </p>
           <input
             type="number"
+            aria-label="Amount to Withdraw (USDC)"
             className="w-full bg-obsidian border border-border-subtle px-3 py-3 text-sm font-mono text-white focus:border-emerald-cyber/50 focus:outline-none"
             placeholder="Enter amount"
             value={amount}
@@ -406,12 +418,14 @@ export default function GridStatusPanel({
   const maxWithdrawable = helpers.getMaxWithdrawable(runtime);
   const isStopped = runtime.status === "stopped";
 
-  // Elapsed time
-  const elapsedMs = Date.now() - runtime.startedAt;
-  const days = Math.floor(elapsedMs / 86400000);
-  const hours = Math.floor((elapsedMs % 86400000) / 3600000);
-  const mins = Math.floor((elapsedMs % 3600000) / 60000);
-  const elapsedLabel = `${days > 0 ? `${days}D ` : ""}${hours}h ${mins}m`;
+  // Elapsed time — deferred to avoid SSR/hydration mismatch
+  const elapsedLabel = useClientValue(() => {
+    const elapsedMs = Date.now() - runtime.startedAt;
+    const days = Math.floor(elapsedMs / 86400000);
+    const hours = Math.floor((elapsedMs % 86400000) / 3600000);
+    const mins = Math.floor((elapsedMs % 3600000) / 60000);
+    return `${days > 0 ? `${days}D ` : ""}${hours}h ${mins}m`;
+  }, "—");
 
   return (
     <section className="glass-panel p-6 space-y-6 border border-emerald-cyber/20">
@@ -678,7 +692,7 @@ export default function GridStatusPanel({
             const sells = runtime.levels
               .filter((l) => l.side === "SELL")
               .sort((a, b) => a.price - b.price);
-            const rows = [];
+            const rows: React.JSX.Element[] = [];
             for (let i = 0; i < Math.max(buys.length, sells.length); i++) {
               const buy = buys[i];
               const sell = sells[i];

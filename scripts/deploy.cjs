@@ -19,7 +19,7 @@ async function main() {
   const address = await registry.getAddress();
   console.log("\n✅ AgentRegistry deployed to:", address);
   console.log("\n📋 Add this to your .env.local:");
-  console.log(`VITE_IDENTITY_REGISTRY=${address}`);
+  console.log(`NEXT_PUBLIC_IDENTITY_REGISTRY=${address}`);
   console.log("\nView on explorer:");
   console.log(`https://sepolia.basescan.org/address/${address}`);
 }

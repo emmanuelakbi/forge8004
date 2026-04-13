@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "../../utils/cn";
 import { useMemo } from "react";
 import { TrendingUp, ShieldCheck, Activity, BarChart3 } from "lucide-react";

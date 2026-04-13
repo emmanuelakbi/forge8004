@@ -1,3 +1,5 @@
+"use client";
+
 import { hashTypedData, recoverTypedDataAddress, type Address } from "viem";
 import { AgentIdentity, TradeIntent } from "../lib/types";
 import { createIntentEnvelope } from "./trustArtifacts";
@@ -50,13 +52,17 @@ function getProvider() {
 /** Select a specific wallet provider (from EIP-6963 discovery) */
 export function selectWalletProvider(wallet: WalletProvider) {
   selectedProvider = wallet.provider;
-  window.localStorage.setItem(SELECTED_WALLET_KEY, wallet.info.uuid);
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem(SELECTED_WALLET_KEY, wallet.info.uuid);
+  }
 }
 
 /** Clear the selected provider */
 export function clearSelectedProvider() {
   selectedProvider = null;
-  window.localStorage.removeItem(SELECTED_WALLET_KEY);
+  if (typeof window !== "undefined") {
+    window.localStorage.removeItem(SELECTED_WALLET_KEY);
+  }
 }
 
 export function getStoredWalletAddress() {
@@ -204,7 +210,13 @@ async function signTradeIntentWithWalletInternal(
   }
 
   const typedDataForWallet = {
-    domain: envelope.typedIntent.domain,
+    domain: envelope.typedIntent.domain as {
+      chainId?: number | bigint;
+      name?: string;
+      salt?: `0x${string}`;
+      verifyingContract?: `0x${string}`;
+      version?: string;
+    },
     primaryType: envelope.typedIntent.primaryType,
     types: {
       TradeIntent: [

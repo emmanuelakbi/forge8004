@@ -1,83 +1,89 @@
 # Forge8004
 
-Forge8004 is a trust layer for autonomous financial agents.
+Forge8004 is an ERC-8004 trust layer for autonomous DeFi trading agents on Base Sepolia.
 
-The project started as an early prototype and is now being shaped into a longer-term product focused on:
+## What It Does
 
-- ERC-8004 agent identity
-- validation and reputation signals
-- capital sandbox controls
-- transparent AI trading telemetry
+- Registers AI trading agents with on-chain ERC-721 identity
+- Runs AI-powered autonomous trading cycles (BTC/ETH) with strategy-specific decision logic
+- Validates every trade intent through risk checks, scoring, and checkpoint artifacts
+- Manages sandbox capital with deposit/withdrawal tracking and exposure controls
+- Provides per-user, auth-scoped dashboards for trust, reputation, and performance data
 
-The product direction is simple:
+## Tech Stack
 
-- agents should be able to act
-- agents should be able to handle capital safely
-- agents should be able to prove why they should be trusted
+- **Framework** — Next.js 15 (App Router) with React 19 and TypeScript
+- **Styling** — Tailwind CSS 4, Framer Motion, Recharts, Lucide React
+- **AI** — Groq SDK (`openai/gpt-oss-120b`) for trade decisions and market sentiment
+- **Data** — Firebase/Firestore (owner-scoped), Firebase Auth (Google + email/password)
+- **Blockchain** — Solidity 0.8.28 (ERC-721 via OpenZeppelin), Hardhat, Base Sepolia
+- **Deployment** — Vercel
 
-## Why This Exists
+## Getting Started
 
-This project is inspired by the ERC-8004 challenge for trustless financial agents.
+Prerequisites: Node.js 18+
 
-Forge8004 is designed to help show:
+```bash
+npm install
+```
 
-- who an agent is
-- what it is allowed to do
-- how it is validated
-- how it performs over time
-- how risk and capital are managed
+Copy `.env.example` to `.env.local` and fill in the required keys:
 
-## Current Scope
+```bash
+cp .env.example .env.local
+```
 
-The current app includes:
+Then start the dev server:
 
-- authenticated agent ownership flows
-- private per-user agent registry views
-- agent detail dashboards
-- validation history and trade logs
-- sandbox capital funding flows
-- simulated autonomous trading cycles
-- Groq-backed market and decision support
+```bash
+npm run dev
+```
 
-Some parts are still prototype-level and simulated. The longer-term roadmap is focused on making the trust, validation, and capital model more explicit and more credible.
+The app runs on [http://localhost:3000](http://localhost:3000).
 
-See the roadmap here:
+## Scripts
 
-- [Product Roadmap](./docs/ROADMAP.md)
+| Command               | Description                    |
+| --------------------- | ------------------------------ |
+| `npm run dev`         | Next.js dev server (port 3000) |
+| `npm run build`       | Production build               |
+| `npm run start`       | Production server (port 3000)  |
+| `npm run lint`        | Type check (`tsc --noEmit`)    |
+| `npm run test`        | Run tests (`vitest --run`)     |
+| `npx hardhat compile` | Compile Solidity contracts     |
 
-## Run Locally
+## Project Structure
 
-Prerequisites:
+```
+app/                    # Next.js App Router
+├── (routes)/           # Route group with shared layout
+├── api/                # API route handlers (ai, market, signals, agents)
+├── components/         # Auth, layout, JSON-LD components
+├── hooks/              # useAuthGuard, useClientValue
+├── lib/                # Server/shared modules (firebase, cache, config, etc.)
+└── providers/          # AuthProvider (React Context)
+src/                    # Shared source
+├── views/              # Page content components (one per route)
+├── components/         # Agent UI, brand components
+├── services/           # Business logic (AI, market, grid bot, on-chain, wallet)
+├── lib/                # Types, config, ABIs, mock data
+└── utils/              # cn(), formatting, AI message helpers
+contracts/              # Solidity smart contracts
+```
 
-- Node.js
+## Environment Variables
 
-Steps:
+See [`.env.example`](./.env.example) for the full list. Key variables:
 
-1. Install dependencies:
-   `npm install`
-2. Set the required keys in [.env.local](./.env.local)
-3. Start the local server:
-   `npm run dev`
+- `GROQ_API_KEY` — required for AI trade cycles and sentiment (server-only)
+- `APP_URL` — production URL for SEO/sitemap
+- `DEPLOYER_PRIVATE_KEY` — Hardhat contract deployment (server-only)
+- `NEXT_PUBLIC_*` — client-side config for RPC URL and contract addresses
 
-The app runs on `http://localhost:3000`.
+## Current State
 
-## Important Files
+Trade execution is simulated — not routed through a real on-chain risk router. EIP-712 typed intents and EIP-1271 smart-wallet support are planned but not yet implemented.
 
-- [server.ts](./server.ts): local API server and AI/market routes
-- [src/pages/Overview.tsx](./src/pages/Overview.tsx): private overview dashboard
-- [src/pages/AgentDetail.tsx](./src/pages/AgentDetail.tsx): trust, capital, and trading detail view
-- [src/lib/erc8004Client.ts](./src/lib/erc8004Client.ts): Firestore-backed agent data layer
-- [firestore.rules](./firestore.rules): Firestore access control rules
-- [docs/ROADMAP.md](./docs/ROADMAP.md): long-term product roadmap
+## License
 
-## Direction
-
-Going forward, this repo should be treated as a product, not just a demo.
-
-That means:
-
-- cleaner architecture
-- stronger trust primitives
-- better risk and capital modeling
-- clearer validation artifacts
-- a more convincing end-to-end story for demos, judges, and future users
+Private — all rights reserved.

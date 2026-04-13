@@ -1,18 +1,35 @@
 // @vitest-environment jsdom
-// Unit tests for src/pages/agent-detail/useAgentDetail.ts
+// Unit tests for src/views/agent-detail/useAgentDetail.ts
 // Focused on the auth-flow behavior: when auth is ready but no user is present,
 // the hook should NOT clear existing state — it should just stop loading.
 
 import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 // ── Mocks ─────────────────────────────────────────────────────────
 
+// Next.js navigation — mock useParams and useRouter
+const mockPush = vi.fn();
+const mockReplace = vi.fn();
+const mockBack = vi.fn();
+vi.mock("next/navigation", () => ({
+  useParams: () => ({ agentId: "test-agent-123" }),
+  useRouter: () => ({
+    push: mockPush,
+    replace: mockReplace,
+    back: mockBack,
+    refresh: vi.fn(),
+    prefetch: vi.fn(),
+    forward: vi.fn(),
+  }),
+  usePathname: () => "/agents/test-agent-123",
+  useSearchParams: () => new URLSearchParams(),
+}));
+
 // Firebase auth — capture the callback so we can simulate auth state changes
 let authCallback: ((user: { uid: string } | null) => void) | null = null;
-vi.mock("@/src/data/firebase", () => ({
+vi.mock("@/app/lib/firebase", () => ({
   subscribeToAuthState: (cb: (user: { uid: string } | null) => void) => {
     authCallback = cb;
     return () => {
@@ -22,21 +39,36 @@ vi.mock("@/src/data/firebase", () => ({
 }));
 
 // erc8004Client — mock all Firestore operations
-const mockGetAgentById = vi.fn().mockResolvedValue(null);
-const mockGetActivePositions = vi.fn().mockResolvedValue([]);
-const mockGetRuntimeState = vi.fn().mockResolvedValue(null);
-const mockGetGridRuntimeState = vi.fn().mockResolvedValue(null);
-const mockGetPendingOrders = vi.fn().mockResolvedValue([]);
-const mockGetValidations = vi.fn().mockResolvedValue([]);
-const mockGetPnlHistory = vi.fn().mockResolvedValue([]);
-const mockGetVaultTransactions = vi.fn().mockResolvedValue([]);
-const mockGetCheckpoints = vi.fn().mockResolvedValue([]);
-const mockGetIntents = vi.fn().mockResolvedValue([]);
-const mockGetReputation = vi.fn().mockResolvedValue(null);
+// vi.hoisted ensures these are available when vi.mock factories run (hoisted to top)
+const {
+  mockGetAgentById,
+  mockGetActivePositions,
+  mockGetRuntimeState,
+  mockGetGridRuntimeState,
+  mockGetPendingOrders,
+  mockGetValidations,
+  mockGetPnlHistory,
+  mockGetVaultTransactions,
+  mockGetCheckpoints,
+  mockGetIntents,
+  mockGetReputation,
+} = vi.hoisted(() => ({
+  mockGetAgentById: vi.fn().mockResolvedValue(null),
+  mockGetActivePositions: vi.fn().mockResolvedValue([]),
+  mockGetRuntimeState: vi.fn().mockResolvedValue(null),
+  mockGetGridRuntimeState: vi.fn().mockResolvedValue(null),
+  mockGetPendingOrders: vi.fn().mockResolvedValue([]),
+  mockGetValidations: vi.fn().mockResolvedValue([]),
+  mockGetPnlHistory: vi.fn().mockResolvedValue([]),
+  mockGetVaultTransactions: vi.fn().mockResolvedValue([]),
+  mockGetCheckpoints: vi.fn().mockResolvedValue([]),
+  mockGetIntents: vi.fn().mockResolvedValue([]),
+  mockGetReputation: vi.fn().mockResolvedValue(null),
+}));
 
 // Proxy-based mock: named read mocks are routed explicitly,
 // everything else (writes, utility methods) returns a resolved promise.
-vi.mock("@/src/data/erc8004Client", () => {
+vi.mock("@/app/lib/erc8004Client", () => {
   const fallback = vi.fn().mockResolvedValue(undefined);
   const methodMap: Record<string, (...args: unknown[]) => unknown> = {
     getAgentById: mockGetAgentById,
@@ -144,32 +176,21 @@ vi.mock("@/src/services/externalValidator", () => ({
 }));
 
 // Page-level utils — re-export actual
-vi.mock("@/src/pages/agent-detail/utils", async () => {
+vi.mock("@/src/views/agent-detail/utils", async () => {
   const actual = await vi.importActual<
-    typeof import("@/src/pages/agent-detail/utils")
-  >("@/src/pages/agent-detail/utils");
+    typeof import("@/src/views/agent-detail/utils")
+  >("@/src/views/agent-detail/utils");
   return { ...actual };
 });
 
 // ── Import under test (after mocks) ──────────────────────────────
 
-import { useAgentDetail } from "@/src/pages/agent-detail/useAgentDetail";
+import { useAgentDetail } from "@/src/views/agent-detail/useAgentDetail";
 
 // ── Helpers ───────────────────────────────────────────────────────
 
 function wrapper({ children }: { children: ReactNode }) {
-  return createElement(
-    MemoryRouter,
-    { initialEntries: ["/agents/test-agent-123"] },
-    createElement(
-      Routes,
-      null,
-      createElement(Route, {
-        path: "/agents/:agentId",
-        element: children,
-      }),
-    ),
-  );
+  return createElement("div", null, children);
 }
 
 const MOCK_AGENT = {

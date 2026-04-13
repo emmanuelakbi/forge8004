@@ -205,7 +205,18 @@ function chooseBestAsset(
   )[0];
 }
 
-export function normalizeTradeDecision(
+export /**
+ * Normalise a raw AI trade decision into a safe, strategy-aware intent.
+ *
+ * Applies asset scoring (may switch the requested asset if the alternative
+ * scores ≥ 0.3 higher), strategy-specific side preferences, risk-profile
+ * position sizing, stop-loss / take-profit clamping, and limit-price
+ * validation. When the asset is switched, a note is prepended to `reason`.
+ *
+ * `spot_grid_bot` strategies short-circuit to HOLD — grid execution is
+ * handled by the Grid Bot service.
+ */
+function normalizeTradeDecision(
   strategy: AgentStrategyType | string,
   riskProfile: string,
   marketData: MarketData,
@@ -249,34 +260,46 @@ export function normalizeTradeDecision(
   const requestedAsset = rawDecision.asset?.toUpperCase() as
     | SupportedAsset
     | undefined;
-  let asset: SupportedAsset =
-    requestedAsset === "BTC" || requestedAsset === "ETH"
-      ? requestedAsset
-      : chooseBestAsset(
-          strategy,
-          side === "HOLD" ? "BUY" : side,
-          marketData,
-          activePositions,
-        );
 
-  const alternativeAsset: SupportedAsset = asset === "BTC" ? "ETH" : "BTC";
-  const assetScore = scoreAssetForDecision(
-    asset,
-    strategy,
-    side === "HOLD" ? "BUY" : side,
-    marketData,
-    activePositions,
-  );
-  const alternativeScore = scoreAssetForDecision(
-    alternativeAsset,
-    strategy,
-    side === "HOLD" ? "BUY" : side,
-    marketData,
-    activePositions,
-  );
-  if (alternativeScore - assetScore >= 0.3) {
-    asset = alternativeAsset;
+  // For HOLD decisions, preserve the AI's analyzed asset — no scoring override.
+  // Asset scoring only matters when we're actually placing a trade.
+  let asset: SupportedAsset;
+  if (side === "HOLD") {
+    asset =
+      requestedAsset === "BTC" || requestedAsset === "ETH"
+        ? requestedAsset
+        : "BTC";
+  } else {
+    asset =
+      requestedAsset === "BTC" || requestedAsset === "ETH"
+        ? requestedAsset
+        : chooseBestAsset(strategy, side, marketData, activePositions);
+
+    const alternativeAsset: SupportedAsset = asset === "BTC" ? "ETH" : "BTC";
+    const assetScore = scoreAssetForDecision(
+      asset,
+      strategy,
+      side,
+      marketData,
+      activePositions,
+    );
+    const alternativeScore = scoreAssetForDecision(
+      alternativeAsset,
+      strategy,
+      side,
+      marketData,
+      activePositions,
+    );
+    if (alternativeScore - assetScore >= 0.3) {
+      asset = alternativeAsset;
+    }
   }
+
+  // If the normalizer switched the asset, append a note to the AI's reason
+  const assetWasSwitched =
+    requestedAsset &&
+    (requestedAsset === "BTC" || requestedAsset === "ETH") &&
+    asset !== requestedAsset;
 
   const preferredSide = getPreferredSideForStrategy(
     strategy,
@@ -402,6 +425,9 @@ export function normalizeTradeDecision(
     takeProfit,
     orderType: limitPrice ? "LIMIT" : "MARKET",
     limitPrice,
+    reason: assetWasSwitched
+      ? `[Asset switched from ${requestedAsset} to ${asset} — ${asset} scored higher for current conditions.] ${rawDecision.reason || ""}`
+      : rawDecision.reason,
   };
 }
 
@@ -432,6 +458,8 @@ export const aiService = {
         riskProfile,
         marketData,
         activePositions,
+        availableCapital,
+        totalTreasury,
       );
       const rawSide =
         (result.decision.side as "BUY" | "SELL" | "HOLD") || "HOLD";

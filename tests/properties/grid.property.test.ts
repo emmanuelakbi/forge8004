@@ -225,13 +225,16 @@ describe("[Grid Bot Properties]", () => {
               2,
               Math.min(50, Math.round(gridLevels)),
             );
-            const expectedBuyCount = Math.floor(clampedLevels / 2);
 
             const buyLevels = runtime.levels.filter((l) => l.side === "BUY");
             const sellLevels = runtime.levels.filter((l) => l.side === "SELL");
 
-            expect(buyLevels.length).toBe(expectedBuyCount);
-            expect(sellLevels.length).toBe(expectedBuyCount);
+            // Bybit-style: levels are distributed across the range.
+            // Buy/sell split depends on where current price falls in the range.
+            // Total levels should equal the clamped count.
+            expect(buyLevels.length + sellLevels.length).toBe(clampedLevels);
+            expect(buyLevels.length).toBeGreaterThan(0);
+            expect(sellLevels.length).toBeGreaterThan(0);
           },
         ),
         { numRuns: 200 },

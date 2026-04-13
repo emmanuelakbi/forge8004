@@ -1,8 +1,8 @@
 // Unit tests for HowItWorks page component
-// Validates: default export from src/pages/how-it-works/HowItWorks.tsx
+// Validates: default export from src/views/how-it-works/HowItWorks.tsx
 
 import { describe, it, expect } from "vitest";
-import HowItWorks from "@/src/pages/how-it-works/HowItWorks";
+import HowItWorks from "@/src/views/how-it-works/HowItWorks";
 
 describe("[HowItWorks]", () => {
   describe("exports", () => {
@@ -34,8 +34,8 @@ describe("[HowItWorks]", () => {
     });
 
     it("should be importable multiple times without side effects", async () => {
-      const mod1 = await import("@/src/pages/how-it-works/HowItWorks");
-      const mod2 = await import("@/src/pages/how-it-works/HowItWorks");
+      const mod1 = await import("@/src/views/how-it-works/HowItWorks");
+      const mod2 = await import("@/src/views/how-it-works/HowItWorks");
       expect(mod1.default).toBe(mod2.default);
     });
   });

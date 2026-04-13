@@ -2,13 +2,16 @@ import path from "path";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  esbuild: {
+    jsx: "automatic",
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "."),
     },
   },
   test: {
-    include: ["tests/**/*.test.ts"],
+    include: ["tests/**/*.test.ts", "__tests__/**/*.test.{ts,tsx}"],
     exclude: ["tests/contracts/**"],
     coverage: {
       provider: "v8",

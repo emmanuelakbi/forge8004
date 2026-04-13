@@ -4,6 +4,7 @@ node_modules/
 # Build output
 dist/
 build/
+.next/
 
 # Hardhat
 artifacts/
@@ -44,3 +45,6 @@ firebase-applet-config.json
 
 # Misc
 *.tsbuildinfo
+
+# Docs (private roadmap and scripts)
+docs/

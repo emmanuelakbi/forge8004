@@ -1,5 +1,5 @@
 import { cn } from "../../utils/cn";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { AggregatedAgentView } from "../../lib/types";
 import { formatEnumLabel } from "../../utils/format";
 import { Shield, TrendingUp } from "lucide-react";
@@ -122,7 +122,7 @@ export default function AgentCard({ agent }: { agent: AggregatedAgentView }) {
       </div>
 
       <Link
-        to={`/agents/${identity.agentId}`}
+        href={`/agents/${identity.agentId}`}
         className="btn-secondary w-full text-center text-[11px] py-3 block uppercase tracking-[0.2em]"
       >
         View Agent Details

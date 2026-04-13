@@ -10,14 +10,41 @@
     "isolatedModules": true,
     "moduleDetection": "force",
     "allowJs": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "types": ["vite/client"],
     "paths": {
       "@/*": ["./*"]
     },
+    "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
-    "noEmit": true
+    "noEmit": true,
+    "strict": false,
+    "incremental": true,
+    "esModuleInterop": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true
   },
-  "include": ["src", "server.ts", "vite.config.ts"],
-  "exclude": ["dist", "node_modules"]
+  "include": [
+    "app",
+    "next-env.d.ts",
+    "next.config.ts",
+    "postcss.config.mjs",
+    "server.ts",
+    "src",
+    "vite.config.ts",
+    ".next/types/**/*.ts",
+    "__tests__/services/aiService.test.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    ".next",
+    "contracts",
+    "artifacts",
+    "cache"
+  ]
 }

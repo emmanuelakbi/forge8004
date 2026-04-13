@@ -1,4 +1,4 @@
-// Unit tests for src/pages/agent-detail/utils.ts
+// Unit tests for src/views/agent-detail/utils.ts
 // Covers all exported pure functions
 
 import { describe, it, expect } from "vitest";
@@ -12,7 +12,7 @@ import {
   deriveValidationRecordsFromIntents,
   SENTIMENT_REFRESH_INTERVAL_MS,
   ACTIVE_GROQ_MODEL_LABEL,
-} from "@/src/pages/agent-detail/utils";
+} from "@/src/views/agent-detail/utils";
 import type { TrustTimelineEvent } from "@/src/services/trustArtifacts";
 import type { TradeIntent } from "@/src/lib/types";
 

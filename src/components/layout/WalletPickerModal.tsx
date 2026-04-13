@@ -1,12 +1,14 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { X, Wallet } from "lucide-react";
-import { cn } from "../../utils/cn";
+import { cn } from "@/src/utils/cn";
 import {
   getAvailableWallets,
   startWalletDiscovery,
   type WalletProvider,
-} from "../../services/walletProviders";
-import { selectWalletProvider, connectWallet } from "../../services/wallet";
+} from "@/src/services/walletProviders";
+import { selectWalletProvider, connectWallet } from "@/src/services/wallet";
 
 interface WalletPickerModalProps {
   open: boolean;

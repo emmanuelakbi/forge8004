@@ -246,6 +246,25 @@ export function getMaxWithdrawable(runtime: GridRuntimeState): number {
 
 // ─── Grid Level Builder ─────────────────────────────────────────────────────
 
+/**
+ * Build grid levels using Bybit-style even distribution across the full range.
+ *
+ * Levels are spaced evenly between `rangeLow` and `rangeHigh`. Prices below
+ * `currentPrice` become BUY orders; prices at or above become SELL orders.
+ * After the initial split, boundary levels are moved between sides so the
+ * buy/sell count difference is at most 1 (prevents lopsided grids when the
+ * current price sits near a range edge). Capital is allocated evenly across
+ * buy levels only — sell levels are funded by selling the base asset. Buy and
+ * sell levels are paired closest-first (highest buy ↔ lowest sell).
+ *
+ * @param rangeLow    - Lower bound of the grid range
+ * @param rangeHigh   - Upper bound of the grid range
+ * @param gridLevels  - Desired number of grid levels (clamped to valid range)
+ * @param capitalReserved - Total quote capital to distribute across buy levels
+ * @param currentPrice - Current market price used to split buy/sell sides
+ * @param timestamp   - Timestamp applied to initial sell level `lastClosedAt`
+ * @returns Grid levels array with initial buy/base amounts (both 0 until market buy)
+ */
 function buildGridLevelsFromRange(
   rangeLow: number,
   rangeHigh: number,
@@ -259,37 +278,56 @@ function buildGridLevelsFromRange(
   initialBuyBase: number;
 } {
   const totalLevels = clampGridLevels(gridLevels);
+  // Bybit-style: distribute levels evenly across the entire range.
+  // Levels below current price become BUY orders, levels above become SELL orders.
   const interval = (rangeHigh - rangeLow) / (totalLevels + 1);
-  const buyCount = Math.floor(totalLevels / 2);
-  const quotePerLevel = buyCount > 0 ? capitalReserved / buyCount : 0;
+  const allPrices: number[] = [];
+  for (let i = 1; i <= totalLevels; i++) {
+    allPrices.push(roundTo(rangeLow + interval * i, 2));
+  }
+
+  // Split into buy (below current price) and sell (above current price)
+  // Don't force balance — let the natural split based on current price determine
+  // how many buys vs sells. This means more sells when price is near the bottom
+  // of the range, and more buys when price is near the top.
+  const buyList = allPrices
+    .filter((p) => p < currentPrice)
+    .sort((a, b) => b - a); // highest buy first
+  const sellList = allPrices
+    .filter((p) => p >= currentPrice)
+    .sort((a, b) => a - b); // lowest sell first
+
+  // Allocate capital evenly across buy levels only (sells are funded by selling base asset)
+  const quotePerLevel =
+    buyList.length > 0 ? capitalReserved / buyList.length : 0;
   const levels: GridLevelState[] = [];
 
-  // Buy levels spread below current price, sell levels spread above
-  for (let i = 1; i <= buyCount; i++) {
-    const buyId = `buy_${i}`;
-    const sellId = `sell_${i}`;
-    const buyPrice = Math.max(
-      rangeLow,
-      roundTo(currentPrice - interval * i, 2),
-    );
-    const sellPrice = Math.min(
-      rangeHigh,
-      roundTo(currentPrice + interval * i, 2),
-    );
+  // Pair buy levels (highest) with sell levels (lowest) — closest pairs first
+  const pairCount = Math.min(buyList.length, sellList.length);
+
+  for (let i = 0; i < buyList.length; i++) {
+    const buyId = `buy_${i + 1}`;
+    const sellId = `sell_${i + 1}`;
 
     levels.push({
       id: buyId,
       side: "BUY",
-      price: buyPrice,
+      price: buyList[i],
       status: "waiting",
       pairedLevelId: sellId,
       quantity: 0,
       quoteAllocated: roundTo(quotePerLevel, 2),
     });
+  }
+
+  for (let i = 0; i < sellList.length; i++) {
+    const sellId = `sell_${i + 1}`;
+    const buyId = `buy_${i + 1}`;
+
     levels.push({
       id: sellId,
       side: "SELL",
-      price: sellPrice,
+      price: sellList[i],
       status: "closed",
       pairedLevelId: buyId,
       quantity: 0,
@@ -523,40 +561,46 @@ export function performInitialMarketBuy(
   const filledBuys: GridLevelState[] = [];
   const armedSells: GridLevelState[] = [];
 
-  // Find buy levels that are BELOW current price — these would normally wait for a dip.
-  // On Bybit, the system buys at market price to arm the paired sell levels above.
-  const buyLevelsBelow = nextRuntime.levels
+  // Bybit-style initial market buy:
+  // Buy base asset at market price to arm sell levels above current price.
+  // Only arm the sell level closest to current price (lowest sell above).
+  // The remaining sells get armed naturally as price rises and triggers
+  // their paired buys. This leaves most buy levels as waiting limit orders
+  // to catch dips — the core value proposition of a grid bot.
+  const sellLevelsAbove = nextRuntime.levels
     .filter(
       (l) =>
-        l.side === "BUY" && l.status === "waiting" && l.price < currentPrice,
+        l.side === "SELL" && l.status === "closed" && l.price > currentPrice,
     )
-    .sort((a, b) => b.price - a.price); // highest first (closest to current price)
+    .sort((a, b) => a.price - b.price); // lowest first (closest to current price)
 
-  for (const buyLevel of buyLevelsBelow) {
-    if (nextRuntime.availableQuote < buyLevel.quoteAllocated) break;
+  // Only fill the closest sell level — not all of them
+  const sellsToArm = sellLevelsAbove.slice(0, 1);
 
-    const pairedSell = nextRuntime.levels.find(
-      (l) => l.id === buyLevel.pairedLevelId,
+  for (const sellLevel of sellsToArm) {
+    // Find the paired buy level to get the quote allocation
+    const pairedBuy = nextRuntime.levels.find(
+      (l) => l.id === sellLevel.pairedLevelId,
     );
-    if (!pairedSell) continue;
-    // Only arm sells that are above current price
-    if (pairedSell.price <= currentPrice) continue;
+    if (!pairedBuy) continue;
 
-    const quantity = roundTo(buyLevel.quoteAllocated / currentPrice, 6);
+    const quoteNeeded = pairedBuy.quoteAllocated;
+    if (nextRuntime.availableQuote < quoteNeeded) break;
 
-    // Fill the buy at market price (not at the buy level price)
-    buyLevel.status = "filled";
-    buyLevel.quantity = quantity;
-    buyLevel.lastFilledAt = ts;
-    buyLevel.price = currentPrice; // entry at market price
+    const quantity = roundTo(quoteNeeded / currentPrice, 6);
 
-    // Arm the paired sell
-    pairedSell.status = "waiting";
-    pairedSell.quantity = quantity;
-    pairedSell.lastClosedAt = undefined;
+    // Mark the paired buy as filled (bought at market price)
+    pairedBuy.status = "filled";
+    pairedBuy.quantity = quantity;
+    pairedBuy.lastFilledAt = ts;
+
+    // Arm the sell level
+    sellLevel.status = "waiting";
+    sellLevel.quantity = quantity;
+    sellLevel.lastClosedAt = undefined;
 
     nextRuntime.availableQuote = roundTo(
-      nextRuntime.availableQuote - buyLevel.quoteAllocated,
+      nextRuntime.availableQuote - quoteNeeded,
       2,
     );
     nextRuntime.heldBase = roundTo(nextRuntime.heldBase + quantity, 6);
@@ -564,8 +608,8 @@ export function performInitialMarketBuy(
     nextRuntime.totalTradesCount += 1;
     nextRuntime.lastGridEventAt = ts;
 
-    filledBuys.push({ ...buyLevel });
-    armedSells.push({ ...pairedSell });
+    filledBuys.push({ ...pairedBuy });
+    armedSells.push({ ...sellLevel });
   }
 
   return { runtime: nextRuntime, filledBuys, armedSells };

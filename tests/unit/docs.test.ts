@@ -1,8 +1,8 @@
 // Unit tests for Docs page component
-// Validates: default export from src/pages/docs/Docs.tsx
+// Validates: default export from src/views/docs/Docs.tsx
 
 import { describe, it, expect } from "vitest";
-import Docs from "@/src/pages/docs/Docs";
+import Docs from "@/src/views/docs/Docs";
 
 describe("[Docs]", () => {
   describe("exports", () => {

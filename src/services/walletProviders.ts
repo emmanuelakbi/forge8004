@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * EIP-6963 multi-wallet provider detection.
  * Discovers all injected wallet extensions and lets the user pick one.
@@ -35,6 +37,7 @@ export function startWalletDiscovery() {
 
 /** Get all discovered wallet providers */
 export function getAvailableWallets(): WalletProvider[] {
+  if (typeof window === "undefined") return [];
   // Also check for legacy window.ethereum if no EIP-6963 providers found
   if (discoveredProviders.length === 0 && window.ethereum) {
     // Check if window.ethereum has a providers array (some wallets expose this)
