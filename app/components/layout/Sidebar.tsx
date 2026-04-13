@@ -2,6 +2,7 @@
 
 import { cn } from "@/src/utils/cn";
 import {
+  FileText,
   Home,
   Mail,
   ShieldCheck,
@@ -30,6 +31,7 @@ const navItems = [
   { name: "Risk Replay", icon: History, path: "/risk-replay" },
   { name: "Portfolio", icon: Wallet, path: "/portfolio" },
   { name: "Markets", icon: Activity, path: "/markets" },
+  { name: "Docs", icon: FileText, path: "/docs" },
   { name: "Contact", icon: Mail, path: "/contact" },
 ];
 

@@ -11,7 +11,6 @@
     "moduleDetection": "force",
     "allowJs": true,
     "jsx": "preserve",
-    "types": ["vite/client"],
     "paths": {
       "@/*": ["./*"]
     },
@@ -30,14 +29,14 @@
   },
   "include": [
     "app",
+    "src",
     "next-env.d.ts",
     "next.config.ts",
     "postcss.config.mjs",
-    "server.ts",
-    "src",
-    "vite.config.ts",
+    "middleware.ts",
     ".next/types/**/*.ts",
-    "__tests__/services/aiService.test.ts"
+    "__tests__",
+    "tests"
   ],
   "exclude": [
     "dist",
@@ -45,6 +44,7 @@
     ".next",
     "contracts",
     "artifacts",
-    "cache"
+    "cache",
+    "tests/contracts"
   ]
 }
