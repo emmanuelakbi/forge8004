@@ -30,7 +30,7 @@ class PitchDeckErrorBoundary extends Component<{ children: ReactNode }, State> {
             Failed to load Pitch Deck
           </p>
           <p className="text-sm text-zinc-400">
-            html2canvas or jsPDF could not be loaded.{" "}
+            Something went wrong loading the pitch deck.{" "}
             {this.state.message && (
               <span className="block mt-1 text-zinc-500">
                 {this.state.message}

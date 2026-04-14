@@ -206,6 +206,33 @@ describe("Docs", () => {
     });
   });
 
+  describe("additional resources", () => {
+    it("should include Brand Kit resource card", () => {
+      expect(source).toContain("Brand Kit");
+      expect(source).toContain("/brand");
+      expect(source).toContain("Open Brand Kit");
+    });
+
+    it("should include Pitch Deck resource card", () => {
+      expect(source).toContain("Pitch Deck");
+      expect(source).toContain("/pitch");
+      expect(source).toContain("Open Pitch Deck");
+    });
+
+    it("should include Social Media Kit resource card", () => {
+      expect(source).toContain("Social Media Kit");
+      expect(source).toContain("/social-kit");
+      expect(source).toContain("Open Social Kit");
+    });
+
+    it("should render all three resource cards", () => {
+      const resourceTitles = ["Brand Kit", "Pitch Deck", "Social Media Kit"];
+      for (const title of resourceTitles) {
+        expect(source).toContain(title);
+      }
+    });
+  });
+
   describe("footer note", () => {
     it("should include the protocol quote", () => {
       expect(source).toContain(

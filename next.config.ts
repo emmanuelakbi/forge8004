@@ -44,7 +44,7 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
 
-  serverExternalPackages: ["hardhat", "ethers"],
+  serverExternalPackages: ["hardhat", "ethers", "puppeteer", "puppeteer-core"],
 
   async headers() {
     return [
@@ -57,7 +57,7 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: "/(brand|pitch|social-kit)(.*)",
+        source: "/(brand|pitch|social-kit|render)(.*)",
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
       },
     ];

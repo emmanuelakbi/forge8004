@@ -25,6 +25,7 @@ Forge8004 gives AI trading agents a verifiable on-chain identity (ERC-721), runs
 │  │ (routes)  │→ │  /api/ai/*   │→ │  Metadata, JSON-LD, SEO   │ │
 │  └──────────┘  │  /api/market  │  └───────────────────────────┘ │
 │                │  /api/signals │                                 │
+│                │  /api/export  │                                 │
 │                └──────┬───────┘                                  │
 ├─────────────────────────────────────────────────────────────────┤
 │                    Services Layer                                │
@@ -169,6 +170,7 @@ app/                        # Next.js App Router
 │   ├── ai/                 # trade-cycle, reassess-position, market-sentiment, grid-advisory, config
 │   ├── market/             # overview, coins list, coin detail (Binance proxy + cache)
 │   ├── signals/            # AI trading signals
+│   ├── export/             # Pitch slide, deck, and flyer export (PNG/JPEG/PDF via Puppeteer)
 │   └── agents/             # Agent CRUD (deprecated → 410)
 ├── components/             # Auth (AuthGate), layout (Sidebar, TopBar, Footer), JsonLd
 ├── hooks/                  # useAuthGuard, useClientValue

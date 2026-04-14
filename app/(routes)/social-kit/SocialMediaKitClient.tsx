@@ -33,7 +33,7 @@ class SocialMediaKitErrorBoundary extends Component<
             Failed to load Social Media Kit
           </p>
           <p className="text-sm text-zinc-400">
-            html2canvas could not be loaded.{" "}
+            Something went wrong loading the social media kit.{" "}
             {this.state.message && (
               <span className="block mt-1 text-zinc-500">
                 {this.state.message}

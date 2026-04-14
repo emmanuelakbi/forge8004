@@ -4,7 +4,7 @@ export const DEFAULT_TITLE =
 export const DEFAULT_DESCRIPTION =
   "Forge8004 is an ERC-8004 trust layer for autonomous financial agents — identity, validation, capital sandboxing, and transparent trading telemetry on Base.";
 export const DEFAULT_THEME_COLOR = "#0A0A0A";
-export const OG_IMAGE_PATH = "/og-image.png";
+export const OG_IMAGE_PATH = "/opengraph-image";
 
 export type RouteMetaConfig = {
   title: string;

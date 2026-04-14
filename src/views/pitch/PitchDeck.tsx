@@ -1,223 +1,63 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Download, Loader2 } from "lucide-react";
-import html2canvas from "html2canvas";
-import { jsPDF } from "jspdf";
-import { SW, SH } from "./types";
 import { slides } from "./slides";
-import { PitchSlide, ScaledSlidePreview } from "./PitchSlide";
+import { ScaledSlidePreview } from "./PitchSlide";
 
-function resolveColor(colorValue: string): string {
-  const temp = document.createElement("div");
-  temp.style.color = colorValue;
-  document.body.appendChild(temp);
-  const resolved = getComputedStyle(temp).color;
-  document.body.removeChild(temp);
-  return resolved || "#10B981";
-}
-
-function sanitizeClone(doc: Document) {
-  const fix = (t: string) =>
-    t
-      ?.replace(/oklch\([^)]+\)/g, (match) => resolveColor(match))
-      .replace(/oklab\([^)]+\)/g, (match) => resolveColor(match)) ?? t;
-  Array.from(doc.getElementsByTagName("style")).forEach((s) => {
-    if (s.textContent) s.textContent = fix(s.textContent);
-  });
-
-  const layoutProps = [
-    "display",
-    "position",
-    "top",
-    "right",
-    "bottom",
-    "left",
-    "width",
-    "height",
-    "minWidth",
-    "minHeight",
-    "maxWidth",
-    "maxHeight",
-    "margin",
-    "marginTop",
-    "marginRight",
-    "marginBottom",
-    "marginLeft",
-    "padding",
-    "paddingTop",
-    "paddingRight",
-    "paddingBottom",
-    "paddingLeft",
-    "flexDirection",
-    "flexWrap",
-    "flexGrow",
-    "flexShrink",
-    "flexBasis",
-    "justifyContent",
-    "alignItems",
-    "alignSelf",
-    "gap",
-    "rowGap",
-    "columnGap",
-    "gridTemplateColumns",
-    "gridTemplateRows",
-    "gridColumn",
-    "gridRow",
-    "overflow",
-    "overflowX",
-    "overflowY",
-    "borderWidth",
-    "borderStyle",
-    "borderColor",
-    "borderRadius",
-    "fontSize",
-    "fontFamily",
-    "fontWeight",
-    "lineHeight",
-    "letterSpacing",
-    "textTransform",
-    "textAlign",
-    "whiteSpace",
-    "color",
-    "backgroundColor",
-    "opacity",
-    "backgroundImage",
-    "backgroundSize",
-    "backgroundPosition",
-    "boxSizing",
-    "verticalAlign",
-  ] as const;
-
-  Array.from(doc.getElementsByTagName("*")).forEach((el) => {
-    const h = el as HTMLElement;
-    const sa = h.getAttribute("style");
-    if (sa) h.setAttribute("style", fix(sa));
-    try {
-      const c = window.getComputedStyle(h);
-      const fixColor = (v: string, f: string) =>
-        !v || v.includes("oklch") || v.includes("oklab") ? f : v;
-      for (const prop of layoutProps) {
-        const val = (c as any)[prop];
-        if (
-          val &&
-          val !== "" &&
-          val !== "normal" &&
-          val !== "none" &&
-          val !== "auto" &&
-          val !== "0px"
-        ) {
-          if (
-            typeof val === "string" &&
-            (val.includes("oklch") || val.includes("oklab"))
-          ) {
-            (h.style as any)[prop] = resolveColor(val);
-          } else {
-            (h.style as any)[prop] = val;
-          }
-        }
-      }
-      h.style.color = fixColor(c.color, "#FFFFFF");
-      h.style.backgroundColor = fixColor(c.backgroundColor, "transparent");
-      h.style.borderColor = fixColor(c.borderColor, "transparent");
-      if (h instanceof SVGElement) {
-        const fill = c.getPropertyValue("fill"),
-          stroke = c.getPropertyValue("stroke");
-        if (fill.includes("oklch") || fill.includes("oklab"))
-          h.style.fill = resolveColor(fill);
-        if (stroke.includes("oklch") || stroke.includes("oklab"))
-          h.style.stroke = resolveColor(stroke);
-      }
-    } catch {
-      /* skip */
-    }
-  });
-  const s = doc.createElement("style");
-  s.innerHTML =
-    "*{transition:none!important;animation:none!important;backdrop-filter:none!important}body{background:#0A0A0B!important}";
-  doc.head.appendChild(s);
+async function downloadBlob(res: Response, fallbackName: string) {
+  const disposition = res.headers.get("Content-Disposition");
+  const match = disposition?.match(/filename="?([^"]+)"?/);
+  const filename = match?.[1] || fallbackName;
+  const blob = await res.blob();
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
 }
 
 export default function PitchDeck() {
   const [isGenerating, setIsGenerating] = useState(false);
-  const exportRef = useRef<HTMLDivElement | null>(null);
-
-  async function render(el: HTMLElement) {
-    return html2canvas(el, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: "#0A0A0B",
-      logging: false,
-      width: SW,
-      height: SH,
-      onclone: (d) => {
-        try {
-          sanitizeClone(d);
-        } catch {}
-      },
-    });
-  }
 
   async function exportAll() {
-    if (!exportRef.current) return;
     setIsGenerating(true);
     try {
-      if ("fonts" in document)
-        await (document as Document & { fonts: FontFaceSet }).fonts.ready;
-      const els = exportRef.current.querySelectorAll<HTMLElement>(
-        "[data-export-slide]",
-      );
-      const pdf = new jsPDF("l", "mm", "a4");
-      const pw = pdf.internal.pageSize.getWidth(),
-        ph = pdf.internal.pageSize.getHeight();
-      for (let i = 0; i < els.length; i++) {
-        if (i > 0) pdf.addPage();
-        pdf.addImage(
-          (await render(els[i])).toDataURL("image/jpeg", 0.98),
-          "JPEG",
-          0,
-          0,
-          pw,
-          ph,
-        );
-      }
-      pdf.save("forge8004-pitch-deck.pdf");
+      const res = await fetch("/api/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "pitch-deck",
+          slideCount: slides.length,
+        }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      await downloadBlob(res, "forge8004-pitch-deck.pdf");
     } catch (e) {
-      console.error(e);
+      console.error("Export failed:", e);
     } finally {
       setIsGenerating(false);
     }
   }
 
   async function exportSlide(idx: number, fmt: "png" | "pdf") {
-    if (!exportRef.current) return;
     setIsGenerating(true);
     try {
-      if ("fonts" in document)
-        await (document as Document & { fonts: FontFaceSet }).fonts.ready;
-      const el = exportRef.current.querySelectorAll<HTMLElement>(
-        "[data-export-slide]",
-      )[idx];
-      if (!el) return;
-      const canvas = await render(el);
-      const name = `forge8004-slide-${String(idx + 1).padStart(2, "0")}`;
-      if (fmt === "png") {
-        const a = document.createElement("a");
-        a.download = `${name}.png`;
-        a.href = canvas.toDataURL("image/png");
-        a.click();
-      } else {
-        const pdf = new jsPDF("l", "mm", "a4");
-        pdf.addImage(
-          canvas.toDataURL("image/jpeg", 0.98),
-          "JPEG",
-          0,
-          0,
-          pdf.internal.pageSize.getWidth(),
-          pdf.internal.pageSize.getHeight(),
-        );
-        pdf.save(`${name}.pdf`);
-      }
+      const res = await fetch("/api/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "pitch-slide",
+          slideIndex: idx,
+          format: fmt,
+        }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const ext = fmt;
+      await downloadBlob(
+        res,
+        `forge8004-slide-${String(idx + 1).padStart(2, "0")}.${ext}`,
+      );
     } catch (e) {
-      console.error(e);
+      console.error("Export failed:", e);
     } finally {
       setIsGenerating(false);
     }
@@ -289,27 +129,6 @@ export default function PitchDeck() {
             <ScaledSlidePreview slide={slide} index={index} />
           </section>
         ))}
-      </div>
-
-      <div
-        style={{
-          position: "fixed",
-          left: -9999,
-          top: 0,
-          width: SW,
-          pointerEvents: "none" as const,
-        }}
-      >
-        <div ref={exportRef}>
-          {slides.map((slide, index) => (
-            <PitchSlide
-              key={`e-${slide.id}`}
-              slide={slide}
-              index={index}
-              idPrefix="e-"
-            />
-          ))}
-        </div>
       </div>
     </div>
   );

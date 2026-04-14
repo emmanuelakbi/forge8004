@@ -114,7 +114,7 @@ export default function Docs() {
           Additional Resources
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
             {
               title: "Brand Kit",
@@ -122,6 +122,20 @@ export default function Docs() {
                 "View the visual identity, brand directions, and presentation assets for Forge8004.",
               path: "/brand",
               cta: "Open Brand Kit",
+            },
+            {
+              title: "Pitch Deck",
+              description:
+                "Browse and export the full Forge8004 pitch deck as high-quality PNG or PDF slides.",
+              path: "/pitch",
+              cta: "Open Pitch Deck",
+            },
+            {
+              title: "Social Media Kit",
+              description:
+                "10 ready-made flyer designs for every platform — export as PNG, JPEG, or PDF.",
+              path: "/social-kit",
+              cta: "Open Social Kit",
             },
           ].map((resource) => (
             <div
