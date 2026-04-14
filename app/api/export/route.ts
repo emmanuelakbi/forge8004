@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import puppeteer from "puppeteer";
+import puppeteerCore from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
 import { jsPDF } from "jspdf";
 
 const ALLOWED_TYPES = ["pitch-slide", "pitch-deck", "flyer"] as const;
 type ExportType = (typeof ALLOWED_TYPES)[number];
+
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
 
 /** Derives the base URL from the incoming request so it always matches the running server. */
 function getBaseUrl(req: NextRequest) {
@@ -13,8 +16,31 @@ function getBaseUrl(req: NextRequest) {
 }
 
 /**
- * Launches a headless Puppeteer browser, navigates to `url`, waits for the
- * `#export-target` element, and returns a high-DPI screenshot buffer.
+ * Launches a headless browser.
+ * - Production (Vercel): uses @sparticuz/chromium + puppeteer-core
+ * - Local dev: uses full puppeteer with its bundled Chromium
+ */
+async function launchBrowser() {
+  if (IS_PRODUCTION) {
+    return puppeteerCore.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: true,
+    });
+  }
+  // Local dev — dynamic import to avoid bundling full puppeteer in production
+  const puppeteer = await import("puppeteer");
+  return puppeteer.default.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
+}
+
+/**
+ * Navigates to `url` in a headless browser, waits for the `#export-target`
+ * element, and returns a high-DPI screenshot buffer.
+ *
+ * Uses {@link launchBrowser} to obtain the browser instance.
  *
  * @param url    - Internal render page URL
  * @param width  - Viewport width in CSS pixels
@@ -28,10 +54,7 @@ async function screenshotPage(
   height: number,
   format: "png" | "jpeg" = "png",
 ): Promise<Buffer> {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  });
+  const browser = await launchBrowser();
   try {
     const page = await browser.newPage();
     await page.setViewport({

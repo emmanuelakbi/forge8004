@@ -44,7 +44,13 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
 
-  serverExternalPackages: ["hardhat", "ethers", "puppeteer", "puppeteer-core"],
+  serverExternalPackages: [
+    "hardhat",
+    "ethers",
+    "puppeteer",
+    "puppeteer-core",
+    "@sparticuz/chromium",
+  ],
 
   async headers() {
     return [
